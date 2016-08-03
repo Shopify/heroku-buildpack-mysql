@@ -16,13 +16,13 @@ MYSQL_PATH="$TMP_PATH/mysql"
 MYSQL_BINARIES="$MYSQL_PATH/usr/bin"
 
 if [ -f $MYSQL_PKG ]; then
-  echo "-----> Using MySQL package from cache"
+  echo "-----> Using MySQL Client package from cache"
 else
-  echo "-----> Downloading MySQL package"
+  echo "-----> Downloading MySQL Client package"
   curl $MYSQL_URL -L -s -o $MYSQL_PKG
 fi
 
-echo "-----> Installing MySQL"
+echo "-----> Installing MySQL Client"
 dpkg -x $MYSQL_PKG $MYSQL_PATH
 chmod +x $MYSQL_BINARIES/*
 mv $MYSQL_BINARIES/* $BIN_PATH/

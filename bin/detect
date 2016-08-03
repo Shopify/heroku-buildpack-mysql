@@ -1,4 +1,4 @@
 #!/bin/bash
 
-echo "MySQL"
+echo "MySQL Client"
 exit 0
