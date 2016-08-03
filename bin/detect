@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "MySQL"
+exit 0
