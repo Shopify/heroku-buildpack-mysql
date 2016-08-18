@@ -10,7 +10,7 @@ BIN_PATH="$BUILD_DIR/bin"
 TMP_PATH="$BUILD_DIR/tmp"
 mkdir -p $CACHE_DIR $BIN_PATH $TMP_PATH
 
-MYSQL_URL="http://security.debian.org/debian-security/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.49-0+deb7u1_amd64.deb"
+MYSQL_URL="http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.50-0+deb7u2_amd64.deb"
 MYSQL_PKG="$CACHE_DIR/mysql.deb"
 MYSQL_PATH="$TMP_PATH/mysql"
 MYSQL_BINARIES="$MYSQL_PATH/usr/bin"
