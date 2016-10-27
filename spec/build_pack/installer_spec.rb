@@ -30,13 +30,21 @@ describe BuildPack::Installer do
 
   context "when cache does not have client " do
     it "downloads and installs client" do
-      stub_request(:get, "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb").
+      stub_request(:get, "http://security.debian.org/pool/updates/main/m/mysql-5.5").
+        with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'security.debian.org', 'User-Agent'=>'Ruby'}).
+        to_return(
+          :status => 200,
+          :body => SAMPLE_DEBIAN_RESPONSE,
+          :headers => {})
+
+      stub_request(:get, "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.62-0+deb7u1_amd64.deb").
         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'security.debian.org', 'User-Agent'=>'Ruby'}).
         to_return(
           :status => 200,
           :body => "fake binary data",
           :headers => {})
       expect(described_class).to receive(:`).with(EXPECTED_DEB_COMMAND) { `#{STUBBED_DEB_COMMAND}` }
+
 
       BuildPack::Installer.install(BUILD_DIR, CACHE_DIR)
 

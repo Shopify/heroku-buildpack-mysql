@@ -3,7 +3,7 @@ module BuildPack
     class << self
       def install(build_dir, cache_dir)
         setup(build_dir, cache_dir)
-        download_client unless cached?
+        Downloader.download_latest_client_to(@mysql_pkg) unless cached?
         install_client
         cleanup
       end
@@ -29,13 +29,6 @@ module BuildPack
         end
 
         exists
-      end
-
-      def download_client
-        mysql_url = "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb"
-
-        puts "-----> Downloading MySQL Client package"
-        File.open(@mysql_pkg, 'w+').write(Net::HTTP.get(URI.parse(mysql_url)))
       end
 
       def install_client

@@ -7,3 +7,4 @@ module BuildPack
 end
 
 require_relative "build_pack/installer"
+require_relative "build_pack/downloader"
