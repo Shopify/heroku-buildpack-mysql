@@ -8,24 +8,35 @@ CACHE_DIR=$2
 
 BIN_PATH="$BUILD_DIR/bin"
 TMP_PATH="$BUILD_DIR/tmp"
-mkdir -p $CACHE_DIR $BIN_PATH $TMP_PATH
+mkdir -p "$CACHE_DIR" "$BIN_PATH" "$TMP_PATH"
+function install_deb_pkg {
+  # The URL to download the deb file from
+  URL=$1
+  # The name of the deb package, useful for logging and renaming the downloaded
+  # .deb file
+  PKG_NAME=$2
+  # The location of where the binaries lie in the .deb file. This is important
+  # because not all .deb files use the same layout of where they put bin files.
+  PKG_BIN_PATH=$3
 
-MYSQL_URL="http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb"
-MYSQL_PKG="$CACHE_DIR/mysql.deb"
-MYSQL_PATH="$TMP_PATH/mysql"
-MYSQL_BINARIES="$MYSQL_PATH/usr/bin"
+  PKG="$CACHE_DIR/$PKG_NAME.deb"
+  PKG_PATH="$TMP_PATH/$PKG_NAME"
+  PKG_BINARIES="$PKG_PATH/$PKG_BIN_PATH"
 
-if [ -f $MYSQL_PKG ]; then
-  echo "-----> Using MySQL Client package from cache"
-else
-  echo "-----> Downloading MySQL Client package"
-  curl $MYSQL_URL -L -s -o $MYSQL_PKG
-fi
+  if [ -f "$PKG" ]; then
+    echo "-----> Using ${PKG_NAME} package from cache"
+  else
+    echo "-----> Downloading ${PKG_NAME} package"
+    curl $URL -L -s -o $PKG
+  fi
 
-echo "-----> Installing MySQL Client"
-dpkg -x $MYSQL_PKG $MYSQL_PATH
-chmod +x $MYSQL_BINARIES/*
-mv $MYSQL_BINARIES/* $BIN_PATH/
+  echo "-----> Installing ${PKG_NAME}"
+  dpkg -x "$PKG" "$PKG_PATH"
+  chmod +x $PKG_BINARIES/*
+  mv "$PKG_BINARIES"/* "$BIN_PATH"/
 
-echo "-----> Cleaning up"
-rm -rf $MYSQL_PATH
+  echo "-----> Cleaning up"
+  rm -rf "$PKG_PATH"
+}
+install_deb_pkg "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb" "mysql_5.5" "usr/bin"
+install_deb_pkg "http://security.debian.org/pool/updates/main/p/postgresql-9.4/postgresql-9.4_9.4.9-0+deb8u1_amd64.deb" "pq_9.4" "usr/lib/postgresql/9.4/bin/"
