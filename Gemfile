@@ -5,4 +5,5 @@ group :development, :test do
   gem "pry-coolline"
   gem "pry"
   gem "webmock"
+  gem "rake"
 end

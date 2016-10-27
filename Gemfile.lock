@@ -16,6 +16,7 @@ GEM
       slop (~> 3.4)
     pry-coolline (0.2.5)
       coolline (~> 0.5)
+    rake (10.5.0)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
@@ -43,6 +44,7 @@ PLATFORMS
 DEPENDENCIES
   pry
   pry-coolline
+  rake
   rspec
   webmock
 
