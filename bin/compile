@@ -9,6 +9,18 @@ CACHE_DIR=$2
 BIN_PATH="$BUILD_DIR/bin"
 TMP_PATH="$BUILD_DIR/tmp"
 mkdir -p "$CACHE_DIR" "$BIN_PATH" "$TMP_PATH"
+
+function download_package {
+  URL=$1
+  PKG_NAME=$2
+  PKG=$3
+  if [ -f "$PKG" ]; then
+    echo "-----> Using ${PKG_NAME} package from cache"
+  else
+    echo "-----> Downloading ${PKG_NAME} package"
+    curl $URL -L -s -o $PKG
+  fi
+}
 function install_deb_pkg {
   # The URL to download the deb file from
   URL=$1
@@ -23,12 +35,7 @@ function install_deb_pkg {
   PKG_PATH="$TMP_PATH/$PKG_NAME"
   PKG_BINARIES="$PKG_PATH/$PKG_BIN_PATH"
 
-  if [ -f "$PKG" ]; then
-    echo "-----> Using ${PKG_NAME} package from cache"
-  else
-    echo "-----> Downloading ${PKG_NAME} package"
-    curl $URL -L -s -o $PKG
-  fi
+  download_package "$URL" "$PKG_NAME" "$PKG"
 
   echo "-----> Installing ${PKG_NAME}"
   dpkg -x "$PKG" "$PKG_PATH"
@@ -38,5 +45,38 @@ function install_deb_pkg {
   echo "-----> Cleaning up"
   rm -rf "$PKG_PATH"
 }
+
+function install_aws_cli {
+  PKG="gof3r_0.5.0_linux_amd64"
+  PKG_FILE="$CACHE_DIR/$PKG.tar.gz"
+  if [ -f "$PKG_FILE" ]; then
+    echo "-----> Using ${PKG} package from cache"
+  else
+    echo "-----> Downloading ${PKG} package"
+    curl "https://github.com/rlmcpherson/s3gof3r/releases/download/v0.5.0/$PKG.tar.gz" -L -s -o $PKG_FILE
+  fi
+  tar -zxf "$PKG_FILE" -C $TMP_PATH
+  mv "$TMP_PATH/$PKG/gof3r" "$BIN_PATH/gof3r"
+  #curl -O https://bootstrap.pypa.io/get-pip.py
+  #python get-pip.py --user
+  # find / -name pip
+  #mkdir -p $BIN_PATH/aws2/
+  #/home/vcap/.local/bin/pip install --install-option="--prefix=$BIN_PATH/aws2"
+  #find $BIN_PATH/aws2 -name aws
+  #PKG_ZIP="$CACHE_DIR/awscli-bundle.zip"
+  #download_package "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" "aws-cli" "$PKG_ZIP"
+  #unzip -f "$PKG_ZIP" -d $CACHE_DIR
+  #"$CACHE_DIR/awscli-bundle/install" -b "$BIN_PATH/aws"
+  # chmod +x "$BIN_PATH/aws"
+}
+
+function install_jq_cli {
+  PKG="$CACHE_DIR/jq-1.5"
+  download_package "https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64" "jq" "$PKG"
+  chmod +x $PKG
+  mv "$PKG" "$BIN_PATH/jq"
+}
 install_deb_pkg "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb" "mysql_5.5" "usr/bin"
 install_deb_pkg "http://security.debian.org/pool/updates/main/p/postgresql-9.4/postgresql-9.4_9.4.9-0+deb8u1_amd64.deb" "pq_9.4" "usr/lib/postgresql/9.4/bin/"
+install_aws_cli
+install_jq_cli
