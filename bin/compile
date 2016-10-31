@@ -46,7 +46,8 @@ function install_deb_pkg {
   rm -rf "$PKG_PATH"
 }
 
-function install_aws_cli {
+# Does not install the aws-cli, rather it install gof3er which can store in s3.
+function install_go_s3_cli {
   PKG="gof3r_0.5.0_linux_amd64"
   PKG_FILE="$CACHE_DIR/$PKG.tar.gz"
   if [ -f "$PKG_FILE" ]; then
@@ -57,17 +58,20 @@ function install_aws_cli {
   fi
   tar -zxf "$PKG_FILE" -C $TMP_PATH
   mv "$TMP_PATH/$PKG/gof3r" "$BIN_PATH/gof3r"
-  #curl -O https://bootstrap.pypa.io/get-pip.py
-  #python get-pip.py --user
-  # find / -name pip
-  #mkdir -p $BIN_PATH/aws2/
-  #/home/vcap/.local/bin/pip install --install-option="--prefix=$BIN_PATH/aws2"
-  #find $BIN_PATH/aws2 -name aws
-  #PKG_ZIP="$CACHE_DIR/awscli-bundle.zip"
-  #download_package "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" "aws-cli" "$PKG_ZIP"
-  #unzip -f "$PKG_ZIP" -d $CACHE_DIR
-  #"$CACHE_DIR/awscli-bundle/install" -b "$BIN_PATH/aws"
-  # chmod +x "$BIN_PATH/aws"
+}
+
+function install_aws_cli {
+  PKG="awscli-bundle.zip"
+  PKG_FILE="$CACHE_DIR/$PKG"
+  if [ -f "$PKG_FILE" ]; then
+    echo "-----> Using ${PKG} package from cache"
+  else
+    echo "-----> Downloading ${PKG} package"
+    curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -L -s -o $PKG_FILE
+  fi
+  unzip $PKG_FILE -d $TMP_PATH/awscli-bundle
+  cp -R $TMP_PATH/awscli-bundle $BUILD_DIR/awscli-bundle
+  # $TMP_PATH/awscli-bundle/awscli-bundle/install -b ~/bin/aws
 }
 
 function install_jq_cli {
