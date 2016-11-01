@@ -1,31 +1,12 @@
-#!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
+#!/usr/bin/env ruby
 
-set -e
+# sync output
+$stdout.sync = true
 
-BUILD_DIR=$1
-CACHE_DIR=$2
+require_relative "../lib/build_pack"
 
-BIN_PATH="$BUILD_DIR/bin"
-TMP_PATH="$BUILD_DIR/tmp"
-mkdir -p $CACHE_DIR $BIN_PATH $TMP_PATH
+build_dir = ARGV[0]
+cache_dir = ARGV[1]
 
-MYSQL_URL="http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb"
-MYSQL_PKG="$CACHE_DIR/mysql.deb"
-MYSQL_PATH="$TMP_PATH/mysql"
-MYSQL_BINARIES="$MYSQL_PATH/usr/bin"
+BuildPack.run(build_dir, cache_dir)
 
-if [ -f $MYSQL_PKG ]; then
-  echo "-----> Using MySQL Client package from cache"
-else
-  echo "-----> Downloading MySQL Client package"
-  curl $MYSQL_URL -L -s -o $MYSQL_PKG
-fi
-
-echo "-----> Installing MySQL Client"
-dpkg -x $MYSQL_PKG $MYSQL_PATH
-chmod +x $MYSQL_BINARIES/*
-mv $MYSQL_BINARIES/* $BIN_PATH/
-
-echo "-----> Cleaning up"
-rm -rf $MYSQL_PATH
