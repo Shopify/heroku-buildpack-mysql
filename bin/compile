@@ -46,20 +46,6 @@ function install_deb_pkg {
   rm -rf "$PKG_PATH"
 }
 
-# Does not install the aws-cli, rather it install gof3er which can store in s3.
-function install_go_s3_cli {
-  PKG="gof3r_0.5.0_linux_amd64"
-  PKG_FILE="$CACHE_DIR/$PKG.tar.gz"
-  if [ -f "$PKG_FILE" ]; then
-    echo "-----> Using ${PKG} package from cache"
-  else
-    echo "-----> Downloading ${PKG} package"
-    curl "https://github.com/rlmcpherson/s3gof3r/releases/download/v0.5.0/$PKG.tar.gz" -L -s -o $PKG_FILE
-  fi
-  tar -zxf "$PKG_FILE" -C $TMP_PATH
-  mv "$TMP_PATH/$PKG/gof3r" "$BIN_PATH/gof3r"
-}
-
 function install_aws_cli {
   PKG="awscli-bundle.zip"
   PKG_FILE="$CACHE_DIR/$PKG"
@@ -74,13 +60,6 @@ function install_aws_cli {
   # $TMP_PATH/awscli-bundle/awscli-bundle/install -b ~/bin/aws
 }
 
-function install_jq_cli {
-  PKG="$CACHE_DIR/jq-1.5"
-  download_package "https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64" "jq" "$PKG"
-  chmod +x $PKG
-  mv "$PKG" "$BIN_PATH/jq"
-}
 install_deb_pkg "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb" "mysql_5.5" "usr/bin"
-install_deb_pkg "http://security.debian.org/pool/updates/main/p/postgresql-9.4/postgresql-9.4_9.4.9-0+deb8u1_amd64.deb" "pq_9.4" "usr/lib/postgresql/9.4/bin/"
+install_deb_pkg "http://security.debian.org/pool/updates/main/p/postgresql-9.4/postgresql-client-9.4_9.4.9-0+deb8u1_amd64.deb" "pq_9.4-client" "usr/lib/postgresql/9.4/bin/"
 install_aws_cli
-install_jq_cli
