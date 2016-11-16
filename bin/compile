@@ -60,6 +60,6 @@ function install_aws_cli {
   # $TMP_PATH/awscli-bundle/awscli-bundle/install -b ~/bin/aws
 }
 
-install_deb_pkg "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb" "mysql_5.5" "usr/bin"
+install_deb_pkg "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb7u1_amd64.deb" "mysql_5.5" "usr/bin"
 install_deb_pkg "http://security.debian.org/pool/updates/main/p/postgresql-9.4/postgresql-client-9.4_9.4.9-0+deb8u1_amd64.deb" "pq_9.4-client" "usr/lib/postgresql/9.4/bin/"
 install_aws_cli
