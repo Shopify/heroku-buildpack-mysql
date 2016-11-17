@@ -9,6 +9,18 @@ CACHE_DIR=$2
 BIN_PATH="$BUILD_DIR/bin"
 TMP_PATH="$BUILD_DIR/tmp"
 mkdir -p "$CACHE_DIR" "$BIN_PATH" "$TMP_PATH"
+
+function download_package {
+  URL=$1
+  PKG_NAME=$2
+  PKG=$3
+  if [ -f "$PKG" ]; then
+    echo "-----> Using ${PKG_NAME} package from cache"
+  else
+    echo "-----> Downloading ${PKG_NAME} package"
+    curl $URL -L -s -o $PKG
+  fi
+}
 function install_deb_pkg {
   # The URL to download the deb file from
   URL=$1
@@ -23,12 +35,7 @@ function install_deb_pkg {
   PKG_PATH="$TMP_PATH/$PKG_NAME"
   PKG_BINARIES="$PKG_PATH/$PKG_BIN_PATH"
 
-  if [ -f "$PKG" ]; then
-    echo "-----> Using ${PKG_NAME} package from cache"
-  else
-    echo "-----> Downloading ${PKG_NAME} package"
-    curl $URL -L -s -o $PKG
-  fi
+  download_package "$URL" "$PKG_NAME" "$PKG"
 
   echo "-----> Installing ${PKG_NAME}"
   dpkg -x "$PKG" "$PKG_PATH"
@@ -38,5 +45,21 @@ function install_deb_pkg {
   echo "-----> Cleaning up"
   rm -rf "$PKG_PATH"
 }
-install_deb_pkg "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb" "mysql_5.5" "usr/bin"
-install_deb_pkg "http://security.debian.org/pool/updates/main/p/postgresql-9.4/postgresql-9.4_9.4.9-0+deb8u1_amd64.deb" "pq_9.4" "usr/lib/postgresql/9.4/bin/"
+
+function install_aws_cli {
+  PKG="awscli-bundle.zip"
+  PKG_FILE="$CACHE_DIR/$PKG"
+  if [ -f "$PKG_FILE" ]; then
+    echo "-----> Using ${PKG} package from cache"
+  else
+    echo "-----> Downloading ${PKG} package"
+    curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -L -s -o $PKG_FILE
+  fi
+  unzip $PKG_FILE -d $TMP_PATH/awscli-bundle
+  cp -R $TMP_PATH/awscli-bundle $BUILD_DIR/awscli-bundle
+  # $TMP_PATH/awscli-bundle/awscli-bundle/install -b ~/bin/aws
+}
+
+install_deb_pkg "http://security.debian.org/pool/updates/main/m/mysql-5.5/mysql-client-5.5_5.5.52-0+deb7u1_amd64.deb" "mysql_5.5" "usr/bin"
+install_deb_pkg "http://security.debian.org/pool/updates/main/p/postgresql-9.4/postgresql-client-9.4_9.4.9-0+deb8u1_amd64.deb" "pq_9.4-client" "usr/lib/postgresql/9.4/bin/"
+install_aws_cli
