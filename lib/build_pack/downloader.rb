@@ -2,7 +2,7 @@ require 'net/http'
 
 module BuildPack
   class Downloader
-    MYSQL_BASE_URL = "http://security.debian.org/pool/updates/main/m/mysql-5.5/"
+    MYSQL_BASE_URL = "http://security-cdn.debian.org/pool/updates/main/m/mysql-5.5/"
 
     # example client: "mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb"
     REGEX = /.*(mysql-client-5\.5_5\.5\.\d\d-0\+deb.u._amd64.deb).*/
