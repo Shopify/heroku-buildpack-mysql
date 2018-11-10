@@ -5,7 +5,8 @@ module BuildPack
     MYSQL_BASE_URL = "http://security.debian.org/pool/updates/main/m/mysql-5.5/"
 
     # example client: "mysql-client-5.5_5.5.52-0+deb8u1_amd64.deb"
-    REGEX = /.*(mysql-client-5\.5_5\.5\.\d\d-0\+deb.u._amd64.deb).*/
+    # REGEX = /.*(mysql-client-5\.5_5\.5\.\d\d-0\+deb.u._amd64.deb).*/
+    REGEX = /.*(mysql-client-5\.5_5\.5\.\d\d-0\+deb.u._amd64\.deb).*/
 
     class << self
       def download_latest_client_to(path)
