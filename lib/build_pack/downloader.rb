@@ -32,6 +32,7 @@ module BuildPack
         Logger.log("available clients:")
         most_recent = ""
         response.lines.each do |line|
+          Logger.log("Line: #{line}")
           if REGEX =~ line
             Logger.log("#{$1}")
             most_recent = $1 if $1 > most_recent
